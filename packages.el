@@ -54,3 +54,8 @@
 (package! git-link)
 (package! org-superstar)
 (package! org-roam)
+(package! blacken)
+(package! prettier-js)
+(package! graphql-mode)
+(package! valign)
+(package! hcl-mode)

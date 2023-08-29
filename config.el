@@ -77,7 +77,7 @@
 ;; Some Extra Keybindings
 ;; source: spacemacs' better default layer
 (setq tab-always-indent t)
-(add-to-list 'default-frame-alist '(undecorated . t))
+(add-to-list 'default-frame-alist '(undecorated-round . t))
 
 (defun backward-kill-word-or-region ()
   "Calls `kill-region' when a region is active and
@@ -150,8 +150,9 @@
   (lsp-diagnostics-provider :none) ;; To disable default lsp flycheck
   (lsp-file-watch-threshold 10000))
 
+(use-package! valign)
+
 (use-package! org-roam
-  :ensure t
   :init
   (setq org-roam-v2-ack t)
   :custom
@@ -169,7 +170,8 @@
   (org-indent-mode)
   (variable-pitch-mode 1)
   (auto-fill-mode 0)
-  (visual-line-mode 1))
+  (visual-line-mode 1)
+  (valign-mode 1))
 
 (use-package! org
   :ensure t
@@ -205,6 +207,8 @@
   (org-meta-line ((t (:inherit (font-lock-comment-face fixed-pitch)))))
   (org-checkbox ((t (:inherit (fixed-pitch org-todo))))))
 
+(remove-hook 'tide-mode-hook 'tide-format-before-save t)
+
 (use-package! org-superstar
   :after org
   :hook (org-mode . org-superstar-mode)
@@ -218,6 +222,9 @@
   (add-to-list 'org-structure-template-alist '("sh" . "src shell"))
   (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
   (add-to-list 'org-structure-template-alist '("py" . "src python"))
+  (add-to-list 'org-structure-template-alist '("ts" . "src typescript"))
+  (add-to-list 'org-structure-template-alist '("js" . "src javascript"))
+  (add-to-list 'org-structure-template-alist '("json" . "src json"))
   (add-to-list 'org-structure-template-alist '("hs" . "src haskell"))
   (add-to-list 'org-structure-template-alist '("cc" . "src c"))
   (add-to-list 'org-structure-template-alist '("rs" . "src rust")))
@@ -229,8 +236,25 @@
     "auto activate venv directory if exists"
     (interactive)
     (f-traverse-upwards (lambda (path)
-                          (let ((venv-path (f-expand "venv" path)))
+                          (let ((venv-path (f-expand ".venv" path)))
                             (when (f-exists? venv-path)
                               (pyvenv-activate venv-path))))))
 
   (add-hook 'python-mode-hook 'ig/pyvenv-autoload))
+
+(use-package! typescript-mode
+  :custom
+  (typescript-indent-level 2))
+
+(use-package! blacken)
+
+(use-package! vertico
+  :bind (("C-M-y". +vertico/project-search)))
+
+(use-package! prettier-js
+  :hook ((typescript-mode . prettier-js-mode))
+  :custom ((prettier-js-show-errors nil)))
+
+(use-package! graphql-mode)
+
+(use-package! hcl-mode)
